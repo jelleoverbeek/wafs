@@ -1,9 +1,21 @@
 (function () {
-    'use strict';
+    "use strict";
 
     var app = {
         init: function() {
             routes.init();
+            nav.init();
+        }
+    };
+
+    var nav = {
+        init: function () {
+            document.querySelectorAll("nav a").forEach(function (element){
+                element.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    sections.toggle(this.hash);
+                });
+            })
         }
     };
 
@@ -13,12 +25,12 @@
             var self = this;
 
             window.addEventListener("hashchange", function (event) {
-                self.current = helper.getHashFromURL(event.newURL);
+                self.current = location.hash;
                 sections.toggle(self.current);
             });
 
-            if (helper.getHashFromURL(location.href) !== "#undefined") {
-                this.current = helper.getHashFromURL(location.href);
+            if (location.hash) {
+                this.current = location.hash;
             } else {
                 this.current = "#start";
             }
@@ -38,12 +50,6 @@
             });
 
             document.querySelector(route).classList.remove("hidden");
-        }
-    };
-
-    var helper = {
-        getHashFromURL: function (url) {
-            return "#" + url.split("#")[1];
         }
     };
 
