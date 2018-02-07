@@ -37,4 +37,10 @@ Disadvantages
 * Analytics tools don't expect single page web apps.
 
 ## Best practices
-...
+* Don't use global variables/objects
+* Declare variables at top of scope
+* Use short clear meaningful names (English)
+* Work in strict mode
+* camelCase your code if(code != Constructor || CONSTANTS)
+* Place external scripts at the bottom of the page
+* Indent your code
