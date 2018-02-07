@@ -13,7 +13,7 @@
             document.querySelectorAll("nav a").forEach(function (element){
                 element.addEventListener("click", function(event) {
                     event.preventDefault();
-                    sections.toggle(this.hash);
+                    location.hash = this.hash;
                 });
             })
         }
