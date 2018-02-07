@@ -17,7 +17,12 @@
                 sections.toggle(self.current);
             });
 
-            this.current = helper.getHashFromURL(location.href);
+            if (helper.getHashFromURL(location.href) !== "#undefined") {
+                this.current = helper.getHashFromURL(location.href);
+            } else {
+                this.current = "#start";
+            }
+
             sections.toggle(this.current);
         }
     };
