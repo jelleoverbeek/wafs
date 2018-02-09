@@ -44,3 +44,7 @@ Disadvantages
 * camelCase your code if(code != Constructor || CONSTANTS)
 * Place external scripts at the bottom of the page
 * Indent your code
+
+## Pull requests
+* https://github.com/velomovies/wafs/pull/1
+* https://github.com/dipsaus9/wafs/pull/1
