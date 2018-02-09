@@ -15,7 +15,7 @@
                     event.preventDefault();
                     location.hash = this.hash;
                 });
-            })
+            });
         }
     };
 
@@ -32,7 +32,10 @@
             if (location.hash) {
                 this.current = location.hash;
             } else {
-                this.current = "#start";
+              //waarom niet met een querySelectorAll en dan het eerste element nemen?
+              //check voorbeeld (kan op meerdere manieren trouwens, dit is misschien een beetje een vieze maar kwam als eerste in mij op)
+                this.current = '#' + document.querySelectorAll('section')[0].id;
+                // this.current = "#start";
             }
 
             sections.toggle(this.current);
@@ -43,12 +46,15 @@
         sections: function() {
             return document.querySelectorAll("section");
         },
+        turnOff: function(elements){
+          elements.forEach(function(element) {
+              element.classList.add("hidden");
+          });
+        },
         toggle: function (route) {
-
-            this.sections().forEach(function(element) {
-                element.classList.add("hidden");
-            });
-
+            //mischien nog een sub function hierin?
+            // Dan creeer je nog meer controle
+            this.turnOff(this.sections());
             document.querySelector(route).classList.remove("hidden");
         }
     };
