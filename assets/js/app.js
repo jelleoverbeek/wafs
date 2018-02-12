@@ -28,9 +28,17 @@
         key: "7ba5f2c9030c85c7b3f7c5816d87960c",
         format: "json",
         limit: 10,
+        setCurrentTrack: function (track) {
+            document.querySelector("#the-track").innerHTML = track
+        },
+        setPlayedTracks: function (tracks) {
+            tracks.forEach(function (track) {
+                document.querySelector("#played-tracks").innerHTML += "<li>" + track.artist["#text"] + " - " + track.name + "</li>"
+            })
+        },
         getRecentTracks: function () {
-
-            var request = new XMLHttpRequest(),
+            var self = this,
+                request = new XMLHttpRequest(),
                 url = "//ws.audioscrobbler.com/2.0?method=user.getrecenttracks&user=" + this.user + "&api_key=" + this.key + "&format=" + this.format + "&limit=" + this.limit
 
             request.open('GET', url, true)
@@ -43,14 +51,8 @@
                         artist = data.recenttracks.track[0].artist["#text"],
                         song = data.recenttracks.track[0].name
 
-                    document.querySelector("#the-track").innerHTML = artist + " - " + song
-
-                    console.log(data.recenttracks.track);
-
-                    tracks.forEach(function (track) {
-                        console.log(track);
-                        document.querySelector("#played-tracks").innerHTML += "<li>" + track.artist["#text"] + " - " + track.name + "</li>"
-                    })
+                    self.setCurrentTrack(artist + " - " + song)
+                    self.setPlayedTracks(tracks)
 
                 } else {
                     // We reached our target server, but it returned an error
