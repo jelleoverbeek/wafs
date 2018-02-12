@@ -1,6 +1,7 @@
 (function () {
     "use strict";
 
+    // General app object
     var app = {
         init: function() {
             routes.init();
@@ -8,6 +9,7 @@
         }
     };
 
+    // Adding event listeners to a elements to prevent the default scroll behaviour
     var nav = {
         init: function () {
             document.querySelectorAll("nav a").forEach(function (element){
@@ -19,6 +21,7 @@
         }
     };
 
+    // Routes object that handles URL changes
     var routes = {
         current: "",
         init: function() {
@@ -29,6 +32,7 @@
                 sections.toggle(self.current);
             });
 
+            // Check if page already has a hash when loading and set the current to it.
             if (location.hash) {
                 this.current = location.hash;
             } else {
@@ -39,13 +43,14 @@
         }
     };
 
+    // Sections object with toggle function to show/hide sections
     var sections = {
-        sections: function() {
+        getSections: function() {
             return document.querySelectorAll("section");
         },
         toggle: function (route) {
 
-            this.sections().forEach(function(element) {
+            this.getSections().forEach(function(element) {
                 element.classList.add("hidden");
             });
 
