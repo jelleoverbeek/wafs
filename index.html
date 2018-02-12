@@ -10,27 +10,30 @@
 <nav>
     <div class="container">
         <ul>
-            <li><a href="#current-track">Current track</a></li>
-            <li><a href="#played-tracks">Played tracks</a></li>
+            <li><a href="#now-playing">Now playing</a></li>
+            <li><a href="#recent-tracks">Played tracks</a></li>
         </ul>
     </div>
 </nav>
 
-<section id="current-track">
+<section id="now-playing">
     <div class="container">
-        <h1>Currently playing:</h1>
-        <h2 id="the-track"></h2>
+        <h1>Now playing</h1>
+        <h2 id="current-track"></h2>
     </div>
 </section>
 
-<section id="played-tracks">
+<section id="recent-tracks">
     <div class="container">
         <h1>Played tracks</h1>
-        <ul id="played-tracks-list"></ul>
+        <ul id="track-list">
+            <li class="track"></li>
+        </ul>
     </div>
 </section>
 
 <script src="assets/js/routie.js"></script>
+<script src="assets/js/transparency.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

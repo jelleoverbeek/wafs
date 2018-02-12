@@ -18,20 +18,20 @@ h2 {
 
 nav {
     border-bottom: 1px solid #eaeaea;
-    height: 56px;
+    height: 3.5rem;
     display: flex;
     align-items: center;
 }
 
 nav ul {
-    max-width: 800px;
+    max-width: 50rem;
     display: flex;
     padding: 0;
 }
 
 nav ul li {
     list-style: none;
-    padding-right: 24px;
+    padding-right: 1.5rem;
 }
 
 a {
@@ -45,9 +45,9 @@ a:hover {
 
 .container {
     width: 100%;
-    max-width: 800px;
+    max-width: 50rem;
     margin: 0 auto;
-    padding: 24px;
+    padding: 1.5rem;
 }
 
 .hidden {
