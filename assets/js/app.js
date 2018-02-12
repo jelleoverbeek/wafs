@@ -4,7 +4,6 @@
     // General app object
     var app = {
         init: function() {
-            routes.init()
             nav.init()
             api.getRecentTracks()
         }
@@ -13,6 +12,8 @@
     // Adding event listeners to a elements to prevent the default scroll behaviour
     var nav = {
         init: function () {
+            console.log(document.querySelectorAll("nav a")[0]);
+
             document.querySelectorAll("nav a").forEach(function (element){
                 element.addEventListener("click", function(event) {
                     event.preventDefault()
@@ -33,7 +34,7 @@
         },
         setPlayedTracks: function (tracks) {
             tracks.forEach(function (track) {
-                document.querySelector("#played-tracks").innerHTML += "<li>" + track.artist["#text"] + " - " + track.name + "</li>"
+                document.querySelector("#played-tracks-list").innerHTML += "<li>" + track.artist["#text"] + " - " + track.name + "</li>"
             })
         },
         getRecentTracks: function () {
@@ -67,27 +68,6 @@
         }
     }
 
-    // Routes object that handles URL changes
-    var routes = {
-        current: "",
-        init: function() {
-            var self = this
-
-            window.addEventListener("hashchange", function (event) {
-                self.current = location.hash
-                sections.toggle(self.current)
-            })
-
-            // Check if page already has a hash when loading and set the current to it.
-            if (location.hash) {
-                this.current = location.hash
-            } else {
-                this.current = "#start"
-            }
-
-            sections.toggle(this.current)
-        }
-    }
 
     // Sections object with toggle function to show/hide sections
     var sections = {
@@ -103,6 +83,14 @@
             document.querySelector(route).classList.remove("hidden")
         }
     }
+
+    routie('current-track', function() {
+        sections.toggle("#current-track")
+    });
+
+    routie('played-tracks', function() {
+        sections.toggle("#played-tracks")
+    });
 
     app.init()
 
