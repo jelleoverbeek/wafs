@@ -37,7 +37,6 @@
 
     var api = {
         user: "jelleoverbeek",
-        key: "7ba5f2c9030c85c7b3f7c5816d87960c",
         format: "json",
         getRecentTracks: function () {
             var self = this;
@@ -45,7 +44,7 @@
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
                     limit = 50,
-                    url = "https://ws.audioscrobbler.com/2.0?method=user.getrecenttracks&user=" + self.user + "&api_key=" + self.key + "&format=" + self.format + "&limit=" + limit
+                    url = "https://ws.audioscrobbler.com/2.0?method=user.getrecenttracks&user=" + self.user + "&api_key=" + config.key + "&format=" + self.format + "&limit=" + limit
 
                 request.open('GET', url, true)
 
