@@ -3,21 +3,27 @@
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;;
     margin: 0;
+    color: #fff;
+    background: #000;
 }
 
 h1 {
-    font-size: 2.3rem;
+    font-size: 2rem;
+    text-align: center;
+    letter-spacing: 1px;
 }
 
 h2 {
     font-weight: normal;
-    color: rgba(0,0,0,0.6);
+    font-size: 1.5rem;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
 }
 
 nav {
-    border-bottom: 1px solid #eaeaea;
+    //background: #212121;
     height: 3.5rem;
     display: flex;
     align-items: center;
@@ -52,4 +58,47 @@ a:hover {
 
 .hidden {
     display: none;
+}
+
+#track-list {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#track-list li {
+    list-style: none;
+    width: 25%;
+    padding: 0.5rem;
+}
+
+#track-list img {
+    max-width: 100%;
+}
+
+#track-list li div {
+    position: relative;
+    overflow: hidden;
+}
+
+#track-list li span {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: #fff;
+    background-image: linear-gradient(-180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.40) 68%, rgba(0,0,0,0.59) 100%);
+    padding: 1rem;
+    transform: translateY(5%);
+    opacity: 0;
+    transition: all ease-in-out .15s;
+}
+
+#track-list li:hover span {
+    transform: translateY(0%);
+    opacity: 1;
 }
