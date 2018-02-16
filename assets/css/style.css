@@ -39,6 +39,24 @@ nav ul li {
     padding-right: 1.5rem;
 }
 
+.tags {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    margin-bottom: 2rem;
+}
+
+.tags li {
+    margin-right: 0.5rem;
+    padding: 0.5rem .75rem;
+    font-size: .75rem;
+    background: #157EE7;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 3rem;
+}
+
 a {
     text-decoration: none;
     color: #157EE7;
@@ -88,7 +106,6 @@ img {
     position: relative;
     overflow: hidden;
 }
-
 
 #track-list li a {
     position: absolute;
