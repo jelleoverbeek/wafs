@@ -46,5 +46,9 @@ Disadvantages
 * Indent your code
 
 ## Pull requests
+### Week 1
 * https://github.com/velomovies/wafs/pull/1
 * https://github.com/dipsaus9/wafs/pull/1
+
+### Week 2
+* https://github.com/velomovies/wafs/pull/5

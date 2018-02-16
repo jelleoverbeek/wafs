@@ -26,6 +26,7 @@
         }
     }
 
+    // Object with content en render functions
     var content = {
         "current-track": "",
         trackList: [],
@@ -35,18 +36,18 @@
 
             // Add tracklist to html
             this.trackList.forEach(function (item) {
-                if(item.mbid) {
-                    document.querySelector("#track-list").innerHTML += '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
-                } else {
-                    document.querySelector("#track-list").innerHTML += '<li><div><img src="' + item.imgSrc + '"><span>' + item.track + '</span></div></li>'
-                }
+                document.querySelector("#track-list").innerHTML += '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
             })
         }
     }
 
+    // Api functions
     var api = {
+        // Last fm user
         user: "jelleoverbeek",
+        // return format of API (JSON/XML)
         format: "json",
+        // Get the recent tracks from API
         getRecentTracks: function () {
             var self = this;
 
@@ -73,12 +74,19 @@
                 request.send()
             });
         },
-        getTrackInfo: function (mbid) {
+        // Get individual track info form API
+        getTrackInfo: function (mbid, artist, name) {
             var self = this;
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
+                    url = ""
+
+                if (mbid) {
                     url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + config.key + "&mbid=" + mbid + "&format=" + self.format
+                } else {
+                    url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
+                }
 
                 request.open('GET', url, true)
 
@@ -98,6 +106,7 @@
                 request.send()
             });
         },
+        // Manipulate recieved track data
         handleRecentTrackData: function () {
             this.getRecentTracks()
                 .then(function (data) {
@@ -137,18 +146,7 @@
                         })
                     }
 
-                    console.log(content);
-
                     content.render()
-                })
-                .catch(function (err) {
-                    console.error(err);
-                });
-        },
-        handleTrackData: function (mbid) {
-            this.getTrackInfo(mbid)
-                .then(function (data) {
-                    console.log(data)
                 })
                 .catch(function (err) {
                     console.error(err);
@@ -156,16 +154,18 @@
         }
     }
 
-    // Sections object with toggle function to show/hide sections
     var sections = {
+        // Return all the sections
         getSections: function() {
             return document.querySelectorAll("section")
         },
+        // Hide all the sections
         hideSections: function () {
             this.getSections().forEach(function(element) {
                 element.classList.add("hidden")
             })
         },
+        // Hide all sections and show current section again
         toggle: function (route) {
             this.hideSections()
             document.querySelector(route).classList.remove("hidden")
@@ -173,21 +173,31 @@
     }
 
     var detailPage = {
+        content: {
+            tags: []
+        },
         init: function (slug) {
-            var container = document.querySelector("#track");
+            var self = this,
+                container = document.querySelector("#track"),
+                trackFromSlug = ""
 
-            var item = content.trackList.filter(function (item) {
-                if(item.slug === slug) {
-                    return item
-                }
-            })
+            trackFromSlug = slug.split("-").join(" ")
+            trackFromSlug = trackFromSlug.split("+")
 
-            container.querySelector("h1").innerHTML = item[0].track
-            container.querySelector("img").src = item[0].imgSrc
+            api.getTrackInfo(false, trackFromSlug[0], trackFromSlug[1])
+                .then(function (data) {
+                    self.content.artist = data.track.artist.name
+                    self.content.name = data.track.name
+                    self.content.tags = data.track.toptags.tag
+                    self.content.img = data.track.album.image[3]["#text"]
 
-            console.log(item[0].mbid)
+                    Transparency.render(document.getElementById('track'), self.content);
+                    container.querySelector("img").src = self.content.img
+                })
+                .catch(function (err) {
+                    console.error(err);
+                });
 
-            api.handleTrackData(item[0].mbid)
         }
     }
 
@@ -203,6 +213,7 @@
         }
     }
 
+    // Routie config
     routie({
         'now-playing': function() {
             sections.toggle("#now-playing")

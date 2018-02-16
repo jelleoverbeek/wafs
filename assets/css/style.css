@@ -5,23 +5,20 @@
 body {
     font-family: 'Roboto', sans-serif;;
     margin: 0;
-    color: #fff;
-    background: #000;
+    color: #212121;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
     font-size: 2rem;
-    text-align: center;
     letter-spacing: 1px;
 }
 
 h2 {
     font-weight: normal;
     font-size: 1.5rem;
-    color: rgba(255,255,255,0.5);
-    text-align: center;
+    color: rgba(0,0,0,0.6);
 }
 
 nav {
@@ -51,6 +48,10 @@ a:hover {
     color: #1468c7;
 }
 
+img {
+    border-radius: 0.25rem;
+}
+
 .container {
     width: 100%;
     max-width: 50rem;
@@ -72,7 +73,11 @@ a:hover {
     list-style: none;
     width: 25%;
     padding: 0.5rem;
-    transition: all ease-in-out .15s;
+    transition: all cubic-bezier(0.5, 2.44, 0.6, 1.06) .25s;
+}
+
+#track-list li:hover {
+    transform: scale(1.05);
 }
 
 #track-list img {
@@ -84,13 +89,15 @@ a:hover {
     overflow: hidden;
 }
 
-#track-list li a, #track-list li span {
+
+#track-list li a {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     top: 0;
     display: flex;
+    color: #fff;
     flex-direction: column;
     justify-content: flex-end;
     background-image: linear-gradient(-180deg, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.40) 68%, rgba(0,0,0,0.59) 100%);
@@ -100,7 +107,7 @@ a:hover {
     transition: all ease-in-out .15s;
 }
 
-#track-list li:hover a, #track-list li:hover span {
+#track-list li:hover a {
     transform: translateY(0%);
     opacity: 1;
 }
