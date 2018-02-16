@@ -189,10 +189,13 @@
                     self.content.artist = data.track.artist.name
                     self.content.name = data.track.name
                     self.content.tags = data.track.toptags.tag
-                    self.content.img = data.track.album.image[3]["#text"]
+
+                    if(data.track.album.image[3]["#text"]) {
+                        self.content.img = data.track.album.image[3]["#text"]
+                        container.querySelector("img").src = self.content.img
+                    }
 
                     Transparency.render(document.getElementById('track'), self.content);
-                    container.querySelector("img").src = self.content.img
                 })
                 .catch(function (err) {
                     console.error(err);
