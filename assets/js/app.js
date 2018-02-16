@@ -186,11 +186,19 @@
 
             api.getTrackInfo(false, trackFromSlug[0], trackFromSlug[1])
                 .then(function (data) {
+                    console.log(data)
                     self.content.artist = data.track.artist.name
                     self.content.name = data.track.name
-                    self.content.tags = data.track.toptags.tag
-                    self.content.img = data.track.album.image[3]["#text"]
-
+                    if (data.track.toptags.tag) {
+                        self.content.tags = data.track.toptags.tag
+                    } else {
+                        self.content.tags = 'geen tags beschikbaar'
+                    }
+                    if (data.track.album) {
+                        self.content.img = data.track.album.image[3]["#text"]
+                    } else {
+                        self.content.img = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsHm6+63u77HzM/f4+bP09bFycy8wMPi5+rr8fTAxMfM0NPX3N++wsXh5eiWmqd3AAACiUlEQVR4nO3b13KDMBBAUZpoovz/3yYIm1CEaZqR1rnnLZ7Eww1LsyGKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADe1W74zthTR21WOJC1SaCNbZnGTqRp67vFqnXUZ+S+ayx67TAwjpXvnq1mXIXpc+Z9dHCbYmJWYdfkz5l3ShPfRWtVNyyWkz2EMoXBjWlfOlusyt1buUThBVIKk6qq7u0tZBQmbaO1zvL+xk5fQmFdvQ//XXs9UUKhKqdzk/T6+ZeAwmpxAnf5GBl+YZ0vzsEvn3+FXxgtLzIuL2v4hf2qMN9biYn9aBJ+4fpCMdsrbLQ18XsKszTVleX18AvPTWliLigLS2L4hef2NM1rT7sd1PALTx0tsvfvbAc1/MITR/yk+fsnbAZVQOHxWVuzWMmrQZVQeHTmnS231NWgSij8fPU0H1HboMoo/HQF3MQbi0GVUrgrs302Ph9U4YXbEd0MqvBCy4iuB1V2oXVEV4MqrFDNX9ob0eWgiiqsq07PDhi7I7oYVFGFavg2o3//9GFE54MqqLBW5tRGj69+HlFjPMWTU1ib76OGRDOoByMqsVB106L/Jh6OqLjC14i+1mJ7PKLSCqcRHZX2JMmFqjvKkV24GNFvLFyN6BcW3hpRQYU3R1RQ4c0RFVR4/wY3Cr2ikEIK/ftXharIbirM91ThF0bJfcOfCyh8iEJPxsXqj3/x7FuFV2ju884fbIKT1uxWbfeheJUUw3KVt3ejM+YzndR30Fbu8pGZOC6Ce95idQPGU6WTLdqx2Q0YzwPDfLRLaQePBBldcDvSl7p38EzQLxXeNjj57kdIAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOAf+QGg0Sz/T2GZ1QAAAABJRU5ErkJggg=='
+                    }
                     Transparency.render(document.getElementById('track'), self.content);
                     container.querySelector("img").src = self.content.img
                 })
