@@ -155,3 +155,7 @@ img {
     transform: translateY(0%);
     opacity: 1;
 }
+
+.preloader {
+    justify-content: center;
+}

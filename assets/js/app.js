@@ -5,10 +5,8 @@
     var app = {
         init: function() {
             if(!location.hash) {
-                routie('now-playing');
+                routie('now-playing')
             }
-
-            api.setRecentTrackData()
         }
     }
 
@@ -18,7 +16,9 @@
         trackList: [],
         render: function () {
             // Render now playing text using transparencyjs
-            Transparency.render(document.getElementById('now-playing'), this);
+            Transparency.render(document.getElementById('now-playing'), this)
+
+            document.querySelector("#track-list").innerHTML = ""
 
             // Add 12 items of tracklist to html
             for(var i = 0; i < 12; i++) {
@@ -35,7 +35,16 @@
         // return format of API (JSON/XML)
         format: "json",
         baseURL: "https://ws.audioscrobbler.com/2.0/",
-        // Filter array by images that have an image
+        // Filter array by images that have an image,
+        showPreloader: function (loading) {
+            var preloader = document.querySelector(".preloader")
+
+            if(loading) {
+                preloader.classList.remove("hidden")
+            } else {
+                preloader.classList.add("hidden")
+            }
+        },
         filterByIMG: function (item) {
             if (item.image[3]["#text"]) {
                 return item
@@ -61,18 +70,20 @@
         },
         // Get the recent tracks from API
         getRecentTracks: function () {
-            var self = this;
+            var self = this
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
                     limit = 50,
                     url = self.baseURL + "?method=user.getrecenttracks&user=" + self.user + "&api_key=" + config.key + "&format=" + self.format + "&limit=" + limit
 
+                self.showPreloader(true)
+
                 request.open('GET', url, true)
 
                 request.onload = function() {
                     if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(request.responseText);
+                        var data = JSON.parse(request.responseText)
                         resolve(data)
                     } else {
                         reject('error')
@@ -80,25 +91,27 @@
                 }
 
                 request.onerror = function() {
-                    reject('error');
+                    reject('error')
                 }
 
                 request.send()
-            });
+            })
         },
         // Get individual track info from API
         getTrackInfo: function (artist, name) {
-            var self = this;
+            var self = this
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
                     url = self.baseURL + "?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
 
+                self.showPreloader(true)
+
                 request.open('GET', url, true)
 
                 request.onload = function() {
                     if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(request.responseText);
+                        var data = JSON.parse(request.responseText)
                         resolve(data)
                     } else {
                         reject('error')
@@ -106,25 +119,27 @@
                 }
 
                 request.onerror = function() {
-                    reject('error');
+                    reject('error')
                 }
 
                 request.send()
-            });
+            })
         },
         // Get similar tracks from API
         getSimilarTracks: function (artist, name) {
-            var self = this;
+            var self = this
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
                     url = self.baseURL + "?method=track.getsimilar&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format + "&limit=12"
 
+                self.showPreloader(true)
+
                 request.open('GET', url, true)
 
                 request.onload = function() {
                     if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(request.responseText);
+                        var data = JSON.parse(request.responseText)
                         resolve(data)
                     } else {
                         reject('error')
@@ -132,11 +147,11 @@
                 }
 
                 request.onerror = function() {
-                    reject('error');
+                    reject('error')
                 }
 
                 request.send()
-            });
+            })
         },
         // Manipulate recieved track data
         setRecentTrackData: function () {
@@ -157,13 +172,14 @@
                     tracksWithIMG = tracks.filter(self.filterByIMG)
 
                     // Create a clean array and put this in to the tracklist
-                    content.trackList = tracksWithIMG.map(self.createTrackObj);
+                    content.trackList = tracksWithIMG.map(self.createTrackObj)
 
                     content.render()
+                    self.showPreloader(false)
                 })
                 .catch(function (err) {
-                    console.error(err);
-                });
+                    console.error(err)
+                })
         }
     }
 
@@ -197,10 +213,10 @@
                 this.container.querySelector("img").src = this.content.img
             }
 
-            Transparency.render(document.getElementById('track'), this.content);
+            Transparency.render(document.getElementById('track'), this.content)
         },
         renderSimilar: function () {
-            var ul = document.querySelector("#similar-tracks");
+            var ul = document.querySelector("#similar-tracks")
 
             ul.innerHTML = ""
 
@@ -223,22 +239,25 @@
                         self.content.img = data.track.album.image[3]["#text"]
                     }
 
-                    self.renderMain();
+                    self.renderMain()
+
+                    api.showPreloader(false)
                 })
                 .catch(function (err) {
-                    console.error(err);
-                });
+                    console.error(err)
+                })
 
             api.getSimilarTracks(track[0], track[1])
                 .then(function (data) {
                     var tracks = data.similartracks.track.filter(api.filterByIMG)
                     self.content["similar-tracks"] = tracks.map(api.createTrackObj)
-                    self.renderSimilar();
+                    self.renderSimilar()
 
+                    api.showPreloader(false)
                 })
                 .catch(function (err) {
-                    console.error(err);
-                });
+                    console.error(err)
+                })
         },
         init: function (slug) {
             this.setContent(helpers.unslugify(slug))
@@ -254,7 +273,7 @@
                 .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
                 .replace(/\-\-+/g, '-')         // Replace multiple - with single -
                 .replace(/^-+/, '')             // Trim - from start of text
-                .replace(/-+$/, '');            // Trim - from end of text
+                .replace(/-+$/, '')            // Trim - from end of text
         },
         unslugify: function (slug) {
             return slug.split("-").join(" ").split("+")
@@ -265,9 +284,11 @@
         routes: routie({
             'now-playing': function() {
                 sections.toggle("#now-playing")
+                api.setRecentTrackData()
             },
             'recent-tracks': function() {
                 sections.toggle("#recent-tracks")
+                api.setRecentTrackData()
             },
             'track/:track': function(slug) {
                 sections.toggle("#track")
