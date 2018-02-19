@@ -243,7 +243,6 @@
                     if(data.error) {
                         document.querySelector("#error h2").textContent = data.message
                         routie('error');
-
                     } else {
                         self.content.artist = data.track.artist.name
                         self.content.name = data.track.name
@@ -264,9 +263,16 @@
 
             api.getSimilarTracks(track[0], track[1])
                 .then(function (data) {
-                    var tracks = data.similartracks.track.filter(api.filterByIMG)
-                    self.content["similar-tracks"] = tracks.map(api.createTrackObj)
-                    self.renderSimilar()
+
+                    if(!data.similartracks.track.length) {
+                        document.querySelector("#similar-tracks").insertAdjacentHTML('beforebegin', '<h3>No similar tracks found</h3>')
+                    } else {
+                        // TODO no similar tracks found text weghalen
+                        var tracks = data.similartracks.track.filter(api.filterByIMG)
+                        self.content["similar-tracks"] = tracks.map(api.createTrackObj)
+                        self.renderSimilar()
+                    }
+
                     self.similarTracksLoading = false;
                     self.checkLoading()
                 })
