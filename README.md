@@ -1,5 +1,19 @@
-# wafs
-The course repo for 'Web App From Scratch'
+# Live demo
+https://jelleoverbeek.github.io/wafs/#now-playing
+
+## Purpose
+What does your app do, what’s its purpose (i.e. passing butter)
+
+## What you need to know 
+What do others need to know about how it works
+
+## API 
+Which API does it use and what are the limitations (rate limit)
+
+## Featured 
+
+## What principles/best practices did you follow
+
 
 ## Advantages and disadvantages of JavaScript libraries/frameworks
 

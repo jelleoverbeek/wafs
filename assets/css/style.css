@@ -81,7 +81,7 @@ img {
 
 .container {
     width: 100%;
-    width: 54rem;
+    max-width: 54rem;
     margin: 0 auto;
     padding: 1.5rem;
     display: flex;

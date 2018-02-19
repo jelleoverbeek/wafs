@@ -208,6 +208,8 @@
             tags: [],
             "similar-tracks": []
         },
+        trackInfoLoading: false,
+        similarTracksLoading: false,
         renderMain: function () {
             // TODO img via transparency inladen
             if(this.content.img) {
@@ -226,27 +228,37 @@
                 ul.insertAdjacentHTML('afterbegin', html)
             })
         },
+        // If both the trackInfo and SimilarTracks API calls are done hide the preloader.
+        checkLoading: function () {
+            if(!this.trackInfoLoading && !this.similarTracksLoading) {
+                api.showPreloader(false)
+            }
+        },
         setContent: function (track) {
             var self = this
 
             api.getTrackInfo(track[0], track[1])
                 .then(function (data) {
-                    self.content.artist = data.track.artist.name
-                    self.content.name = data.track.name
-                    self.content.tags = data.track.toptags.tag
-                    self.content.listeners = data.track.listeners
 
-                    if(data.track.album.image[3]["#text"]) {
+                    if(data.error) {
+                        // If there is an error return this to the user
+                        document.querySelector(".details").innerHTML = '<h1>' + data.message + '</h1>'
+                    } else {
+                        self.content.artist = data.track.artist.name
+                        self.content.name = data.track.name
+                        self.content.tags = data.track.toptags.tag
+                        self.content.listeners = data.track.listeners
                         self.content.img = data.track.album.image[3]["#text"]
+
+                        self.renderMain()
                     }
 
-                    self.renderMain()
-
-                    api.showPreloader(false)
+                    self.trackInfoLoading = false;
+                    self.checkLoading()
                 })
                 .catch(function (err) {
-                    console.log(err)
-                    routie('track-not-found')
+                    console.error(err)
+                    api.showPreloader(false)
                 })
 
             api.getSimilarTracks(track[0], track[1])
@@ -254,11 +266,12 @@
                     var tracks = data.similartracks.track.filter(api.filterByIMG)
                     self.content["similar-tracks"] = tracks.map(api.createTrackObj)
                     self.renderSimilar()
-
-                    api.showPreloader(false)
+                    self.similarTracksLoading = false;
+                    self.checkLoading()
                 })
                 .catch(function (err) {
-                    console.log(err)
+                    console.error(err)
+                    api.showPreloader(false)
                 })
         },
         init: function (slug) {
