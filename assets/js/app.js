@@ -241,8 +241,9 @@
                 .then(function (data) {
 
                     if(data.error) {
-                        // If there is an error return this to the user
-                        document.querySelector(".details").innerHTML = '<h1>' + data.message + '</h1>'
+                        document.querySelector("#error h2").textContent = data.message
+                        routie('error');
+
                     } else {
                         self.content.artist = data.track.artist.name
                         self.content.name = data.track.name
@@ -308,10 +309,6 @@
             'track/:track': function(slug) {
                 sections.toggle("#track")
                 detailPage.init(slug)
-            },
-            'track-not-found': function() {
-                sections.toggle("#track-not-found")
-                api.showPreloader(false)
             },
             'error': function() {
                 sections.toggle("#error")
