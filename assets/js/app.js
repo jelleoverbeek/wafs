@@ -8,7 +8,7 @@
                 routie('now-playing');
             }
 
-            api.handleRecentTrackData()
+            api.setRecentTrackData()
         }
     }
 
@@ -22,7 +22,8 @@
 
             // Add 12 items of tracklist to html
             for(var i = 0; i < 12; i++) {
-                document.querySelector("#track-list").innerHTML += '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
+                var html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
+                document.querySelector("#track-list").insertAdjacentHTML('afterbegin', html)
             }
         }
     }
@@ -33,18 +34,28 @@
         user: "jelleoverbeek",
         // return format of API (JSON/XML)
         format: "json",
+        baseURL: "https://ws.audioscrobbler.com/2.0/",
         // Filter array by images that have an image
         filterByIMG: function (item) {
-            if (item.image[3]["#text"] !== "") {
+            if (item.image[3]["#text"]) {
                 return item
             }
         },
-        setTrackList: function (item) {
+        // To be used with .map(), returns a clean track object
+        createTrackObj: function (item) {
+            var artist = ""
+
+            if (item.artist["#text"]) {
+                artist = item.artist["#text"]
+            } else {
+                artist = item.artist.name
+            }
+
             return {
-                artist: item.artist["#text"],
+                artist: artist,
                 name: item.name,
-                slug: helpers.slugify(item.artist["#text"]) + '+' + helpers.slugify(item.name),
-                track: item.artist["#text"] + " - " + item.name,
+                slug: helpers.slugify(artist) + '+' + helpers.slugify(item.name),
+                track: artist + " - " + item.name,
                 imgSrc: item.image[3]["#text"]
             }
         },
@@ -55,7 +66,7 @@
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
                     limit = 50,
-                    url = "https://ws.audioscrobbler.com/2.0?method=user.getrecenttracks&user=" + self.user + "&api_key=" + config.key + "&format=" + self.format + "&limit=" + limit
+                    url = self.baseURL + "?method=user.getrecenttracks&user=" + self.user + "&api_key=" + config.key + "&format=" + self.format + "&limit=" + limit
 
                 request.open('GET', url, true)
 
@@ -75,13 +86,39 @@
                 request.send()
             });
         },
-        // Get individual track info form API
+        // Get individual track info from API
         getTrackInfo: function (artist, name) {
             var self = this;
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
-                    url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
+                    url = self.baseURL + "?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
+
+                request.open('GET', url, true)
+
+                request.onload = function() {
+                    if (request.status >= 200 && request.status < 400) {
+                        var data = JSON.parse(request.responseText);
+                        resolve(data)
+                    } else {
+                        reject('error')
+                    }
+                }
+
+                request.onerror = function() {
+                    reject('error');
+                }
+
+                request.send()
+            });
+        },
+        // Get similar tracks from API
+        getSimilarTracks: function (artist, name) {
+            var self = this;
+
+            return new Promise(function (resolve, reject) {
+                var request = new XMLHttpRequest(),
+                    url = self.baseURL + "?method=track.getsimilar&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format + "&limit=12"
 
                 request.open('GET', url, true)
 
@@ -102,7 +139,7 @@
             });
         },
         // Manipulate recieved track data
-        handleRecentTrackData: function () {
+        setRecentTrackData: function () {
             var self = this
 
             this.getRecentTracks()
@@ -120,7 +157,7 @@
                     tracksWithIMG = tracks.filter(self.filterByIMG)
 
                     // Create a clean array and put this in to the tracklist
-                    content.trackList = tracksWithIMG.map(self.setTrackList);
+                    content.trackList = tracksWithIMG.map(self.createTrackObj);
 
                     content.render()
                 })
@@ -151,15 +188,26 @@
     var detailPage = {
         container: document.querySelector("#track"),
         content: {
-            tags: []
+            tags: [],
+            "similar-tracks": []
         },
-        render: function () {
+        renderMain: function () {
             // TODO img via transparency inladen
             if(this.content.img) {
                 this.container.querySelector("img").src = this.content.img
             }
 
             Transparency.render(document.getElementById('track'), this.content);
+        },
+        renderSimilar: function () {
+            var ul = document.querySelector("#similar-tracks");
+
+            ul.innerHTML = ""
+
+            this.content["similar-tracks"].forEach(function (item) {
+                var html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
+                ul.insertAdjacentHTML('afterbegin', html)
+            })
         },
         setContent: function (track) {
             var self = this
@@ -171,13 +219,22 @@
                     self.content.tags = data.track.toptags.tag
                     self.content.listeners = data.track.listeners
 
-                    console.log(data.track)
-
                     if(data.track.album.image[3]["#text"]) {
                         self.content.img = data.track.album.image[3]["#text"]
                     }
 
-                    self.render();
+                    self.renderMain();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                });
+
+            api.getSimilarTracks(track[0], track[1])
+                .then(function (data) {
+                    var tracks = data.similartracks.track.filter(api.filterByIMG)
+                    self.content["similar-tracks"] = tracks.map(api.createTrackObj)
+                    self.renderSimilar();
+
                 })
                 .catch(function (err) {
                     console.error(err);

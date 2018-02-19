@@ -27,19 +27,28 @@
 <section id="recent-tracks">
     <div class="container">
         <h1>Played tracks</h1>
-        <ul id="track-list"></ul>
+        <ul id="track-list" class="track-list"></ul>
     </div>
 </section>
 
 <section id="track">
     <div class="container">
-        <h1><span class="artist"></span> - <span class="name"></span></h1>
-        <ul class="tags">
-            <li class="name"></li>
-        </ul>
-        <h2>Listeners: <span class="listeners"></span></h2>
+        <div class="col col-40">
+            <img src="">
+        </div>
 
-        <img src="">
+        <div class="col col-60">
+            <h1><span class="artist"></span> - <span class="name"></span></h1>
+            <ul class="tags">
+                <li class="name"></li>
+            </ul>
+            <h3><span class="listeners"></span> listeners</h3>
+        </div>
+
+        <div class="col">
+            <h2>Similar tracks</h2>
+            <ul id="similar-tracks" class="track-list"></ul>
+        </div>
     </div>
 </section>
 
