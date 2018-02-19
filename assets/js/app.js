@@ -178,6 +178,7 @@
                     self.showPreloader(false)
                 })
                 .catch(function (err) {
+                    routie('error')
                     console.error(err)
                 })
         }
@@ -244,7 +245,8 @@
                     api.showPreloader(false)
                 })
                 .catch(function (err) {
-                    console.error(err)
+                    console.log(err)
+                    routie('track-not-found')
                 })
 
             api.getSimilarTracks(track[0], track[1])
@@ -256,7 +258,7 @@
                     api.showPreloader(false)
                 })
                 .catch(function (err) {
-                    console.error(err)
+                    console.log(err)
                 })
         },
         init: function (slug) {
@@ -293,6 +295,14 @@
             'track/:track': function(slug) {
                 sections.toggle("#track")
                 detailPage.init(slug)
+            },
+            'track-not-found': function() {
+                sections.toggle("#track-not-found")
+                api.showPreloader(false)
+            },
+            'error': function() {
+                sections.toggle("#error")
+                api.showPreloader(false)
             }
         })
     }
