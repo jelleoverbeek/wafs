@@ -4,25 +4,11 @@
     // General app object
     var app = {
         init: function() {
-
             if(!location.hash) {
                 routie('now-playing');
             }
 
-            nav.init()
             api.handleRecentTrackData()
-        }
-    }
-
-    // Adding event listeners to a elements to prevent the default scroll behaviour
-    var nav = {
-        init: function () {
-            document.querySelectorAll("nav a").forEach(function (element){
-                element.addEventListener("click", function(event) {
-                    event.preventDefault()
-                    location.hash = this.hash
-                })
-            })
         }
     }
 
@@ -34,10 +20,10 @@
             // Render now playing text using transparencyjs
             Transparency.render(document.getElementById('now-playing'), this);
 
-            // Add tracklist to html
-            this.trackList.forEach(function (item) {
-                document.querySelector("#track-list").innerHTML += '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
-            })
+            // Add 12 items of tracklist to html
+            for(var i = 0; i < 12; i++) {
+                document.querySelector("#track-list").innerHTML += '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
+            }
         }
     }
 
@@ -47,6 +33,21 @@
         user: "jelleoverbeek",
         // return format of API (JSON/XML)
         format: "json",
+        // Filter array by images that have an image
+        filterByIMG: function (item) {
+            if (item.image[3]["#text"] !== "") {
+                return item
+            }
+        },
+        setTrackList: function (item) {
+            return {
+                artist: item.artist["#text"],
+                name: item.name,
+                slug: helpers.slugify(item.artist["#text"]) + '+' + helpers.slugify(item.name),
+                track: item.artist["#text"] + " - " + item.name,
+                imgSrc: item.image[3]["#text"]
+            }
+        },
         // Get the recent tracks from API
         getRecentTracks: function () {
             var self = this;
@@ -75,18 +76,12 @@
             });
         },
         // Get individual track info form API
-        getTrackInfo: function (mbid, artist, name) {
+        getTrackInfo: function (artist, name) {
             var self = this;
 
             return new Promise(function (resolve, reject) {
                 var request = new XMLHttpRequest(),
-                    url = ""
-
-                if (mbid) {
-                    url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + config.key + "&mbid=" + mbid + "&format=" + self.format
-                } else {
                     url = "https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
-                }
 
                 request.open('GET', url, true)
 
@@ -108,43 +103,24 @@
         },
         // Manipulate recieved track data
         handleRecentTrackData: function () {
+            var self = this
+
             this.getRecentTracks()
                 .then(function (data) {
                     var tracks = data.recenttracks.track,
-                        tracksWithIMG = [],
-                        tracksWithMBID = []
+                        tracksWithIMG = []
 
+                    // Set current track to first song of array
                     content["current-track"] = data.recenttracks.track[0].artist["#text"] + " - " + data.recenttracks.track[0].name
+
+                    // Remove first track of array
                     tracks.shift()
 
-                    // Filter array by images that have an image
-                    function filterByIMG(item) {
-                        if (item.image[3]["#text"] !== "") {
-                            return item
-                        }
-                    }
+                    // Create new array where only tracks with images exist
+                    tracksWithIMG = tracks.filter(self.filterByIMG)
 
-                    // Filter array by images that have an mbid
-                    function filterByMBID(item) {
-                        if (item.mbid !== "") {
-                            return item
-                        }
-                    }
-
-                    tracksWithIMG = tracks.filter(filterByIMG)
-                    // tracksWithMBID = tracksWithIMG.filter(filterByMBID)
-
-                    // Only push 12 items to the content object
-                    for(var i = 0; i < 12; i++) {
-                        content.trackList.push({
-                            artist: tracksWithIMG[i].artist["#text"],
-                            name: tracksWithIMG[i].name,
-                            slug: helper.slugify(tracksWithIMG[i].artist["#text"]) + '+' + helper.slugify(tracksWithIMG[i].name),
-                            track: tracksWithIMG[i].artist["#text"] + " - " + tracksWithIMG[i].name,
-                            imgSrc: tracksWithIMG[i].image[3]["#text"],
-                            mbid: tracksWithIMG[i].mbid
-                        })
-                    }
+                    // Create a clean array and put this in to the tracklist
+                    content.trackList = tracksWithIMG.map(self.setTrackList);
 
                     content.render()
                 })
@@ -173,39 +149,48 @@
     }
 
     var detailPage = {
+        container: document.querySelector("#track"),
         content: {
             tags: []
         },
-        init: function (slug) {
-            var self = this,
-                container = document.querySelector("#track"),
-                trackFromSlug = ""
+        render: function () {
+            // TODO img via transparency inladen
+            if(this.content.img) {
+                this.container.querySelector("img").src = this.content.img
+            }
 
-            trackFromSlug = slug.split("-").join(" ")
-            trackFromSlug = trackFromSlug.split("+")
+            Transparency.render(document.getElementById('track'), this.content);
+        },
+        setContent: function (track) {
+            var self = this
 
-            api.getTrackInfo(false, trackFromSlug[0], trackFromSlug[1])
+            api.getTrackInfo(track[0], track[1])
                 .then(function (data) {
                     self.content.artist = data.track.artist.name
                     self.content.name = data.track.name
                     self.content.tags = data.track.toptags.tag
+                    self.content.listeners = data.track.listeners
+
+                    console.log(data.track)
 
                     if(data.track.album.image[3]["#text"]) {
                         self.content.img = data.track.album.image[3]["#text"]
-                        container.querySelector("img").src = self.content.img
                     }
 
-                    Transparency.render(document.getElementById('track'), self.content);
+                    self.render();
                 })
                 .catch(function (err) {
                     console.error(err);
                 });
-
+        },
+        init: function (slug) {
+            this.setContent(helpers.unslugify(slug))
         }
     }
 
-    var helper = {
+    var helpers = {
         // source: https://gist.github.com/mathewbyrne/1280286
+        // Slugify niet naar apart router obj verplaatst omdat er ook een unslugify functie bijgekomen is en het anders heel verspreid staat.
         slugify: function (text) {
             return text.toString().toLowerCase()
                 .replace(/\s+/g, '-')           // Replace spaces with -
@@ -213,22 +198,26 @@
                 .replace(/\-\-+/g, '-')         // Replace multiple - with single -
                 .replace(/^-+/, '')             // Trim - from start of text
                 .replace(/-+$/, '');            // Trim - from end of text
+        },
+        unslugify: function (slug) {
+            return slug.split("-").join(" ").split("+")
         }
     }
 
-    // Routie config
-    routie({
-        'now-playing': function() {
-            sections.toggle("#now-playing")
-        },
-        'recent-tracks': function() {
-            sections.toggle("#recent-tracks")
-        },
-        'track/:track': function(slug) {
-            sections.toggle("#track")
-            detailPage.init(slug)
-        }
-    });
+    var router = {
+        routes: routie({
+            'now-playing': function() {
+                sections.toggle("#now-playing")
+            },
+            'recent-tracks': function() {
+                sections.toggle("#recent-tracks")
+            },
+            'track/:track': function(slug) {
+                sections.toggle("#track")
+                detailPage.init(slug)
+            }
+        })
+    }
 
     app.init()
 
