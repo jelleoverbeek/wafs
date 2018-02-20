@@ -10,24 +10,6 @@
         }
     }
 
-    // Object with content en render functions
-    var content = {
-        "current-track": "",
-        trackList: [],
-        render: function () {
-            // Render now playing text using transparencyjs
-            Transparency.render(document.getElementById('now-playing'), this)
-
-            document.querySelector("#track-list").innerHTML = ""
-
-            // Add 12 items of tracklist to html
-            for(var i = 0; i < 12; i++) {
-                var html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
-                document.querySelector("#track-list").insertAdjacentHTML('afterbegin', html)
-            }
-        }
-    }
-
     // Api functions
     var api = {
         // Last fm user
@@ -153,12 +135,18 @@
 
                 request.send()
             })
-        },
+        }
+    }
+
+    // Object with content en render functions
+    var content = {
+        "current-track": "",
+        trackList: [],
         // Manipulate recieved track data
-        setRecentTrackData: function () {
+        setRecentTracksData: function () {
             var self = this
 
-            this.getRecentTracks()
+            api.getRecentTracks()
                 .then(function (data) {
                     var tracks = data.recenttracks.track,
                         tracksWithIMG = []
@@ -170,18 +158,30 @@
                     tracks.shift()
 
                     // Create new array where only tracks with images exist
-                    tracksWithIMG = tracks.filter(self.filterByIMG)
+                    tracksWithIMG = tracks.filter(api.filterByIMG)
 
                     // Create a clean array and put this in to the tracklist
-                    content.trackList = tracksWithIMG.map(self.createTrackObj)
+                    content.trackList = tracksWithIMG.map(api.createTrackObj)
 
-                    content.render()
-                    self.showPreloader(false)
+                    self.render()
+                    api.showPreloader(false)
                 })
                 .catch(function (err) {
                     routie('error')
                     console.error(err)
                 })
+        },
+        render: function () {
+            // Render now playing text using transparencyjs
+            Transparency.render(document.getElementById('now-playing'), this)
+
+            document.querySelector("#track-list").innerHTML = ""
+
+            // Add 12 items of tracklist to html
+            for(var i = 0; i < 12; i++) {
+                var html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
+                document.querySelector("#track-list").insertAdjacentHTML('afterbegin', html)
+            }
         }
     }
 
@@ -311,7 +311,7 @@
                 .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
                 .replace(/\-\-+/g, '-')         // Replace multiple - with single -
                 .replace(/^-+/, '')             // Trim - from start of text
-                .replace(/-+$/, '')            // Trim - from end of text
+                .replace(/-+$/, '')             // Trim - from end of text
         },
         unslugify: function (slug) {
             return slug.split("-").join(" ").split("+")
@@ -323,11 +323,11 @@
         routes: routie({
             'now-playing': function() {
                 sections.toggle("#now-playing")
-                api.setRecentTrackData()
+                content.setRecentTracksData()
             },
             'recent-tracks': function() {
                 sections.toggle("#recent-tracks")
-                api.setRecentTrackData()
+                content.setRecentTracksData()
             },
             'track/:track': function(slug) {
                 sections.toggle("#track")
