@@ -210,6 +210,10 @@
         },
         trackInfoLoading: false,
         similarTracksLoading: false,
+        cleanContent: function () {
+            document.querySelector("#no-similar-tracks").classList.add("hidden");
+            document.querySelector("#similar-tracks").innerHTML = "";
+        },
         renderMain: function () {
             // TODO img via transparency inladen
             if(this.content.img) {
@@ -219,13 +223,9 @@
             Transparency.render(document.getElementById('track'), this.content)
         },
         renderSimilar: function () {
-            var ul = document.querySelector("#similar-tracks")
-
-            ul.innerHTML = ""
-
             this.content["similar-tracks"].forEach(function (item) {
                 var html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
-                ul.insertAdjacentHTML('afterbegin', html)
+                document.querySelector("#similar-tracks").insertAdjacentHTML('afterbegin', html)
             })
         },
         // If both the trackInfo and SimilarTracks API calls are done hide the preloader.
@@ -244,11 +244,18 @@
                         document.querySelector("#error h2").textContent = data.message
                         routie('error');
                     } else {
+                        console.log(data);
+
                         self.content.artist = data.track.artist.name
                         self.content.name = data.track.name
                         self.content.tags = data.track.toptags.tag
                         self.content.listeners = data.track.listeners
-                        self.content.img = data.track.album.image[3]["#text"]
+
+                        if(data.track.album && data.track.album.image[3]["#text"]) {
+                            self.content.img = data.track.album.image[3]["#text"]
+                        } else {
+                            self.content.img = "assets/img/albumart.svg"
+                        }
 
                         self.renderMain()
                     }
@@ -265,7 +272,7 @@
                 .then(function (data) {
 
                     if(!data.similartracks.track.length) {
-                        document.querySelector("#similar-tracks").insertAdjacentHTML('beforebegin', '<h3>No similar tracks found</h3>')
+                        document.querySelector("#no-similar-tracks").classList.remove("hidden");
                     } else {
                         // TODO no similar tracks found text weghalen
                         var tracks = data.similartracks.track.filter(api.filterByIMG)
@@ -282,6 +289,7 @@
                 })
         },
         init: function (slug) {
+            this.cleanContent()
             this.setContent(helpers.unslugify(slug))
         }
     }

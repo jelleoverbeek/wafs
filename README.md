@@ -1,16 +1,20 @@
-# Live demo
+# WAFS
+(Web app from scratch)
+
+#### Live demo
 https://jelleoverbeek.github.io/wafs/#now-playing
 
-## Purpose
-What does your app do, what’s its purpose (i.e. passing butter)
+#### Purpose
+This app shows my recent music activity.
 
-## What you need to know 
-What do others need to know about how it works
+#### What you need to know 
+This app is build for a school project. It's my first app using a object literal pattern.
 
-## API 
-Which API does it use and what are the limitations (rate limit)
+#### API 
+it uses the Last.fm API to get info about this music. I connected my Spotify to Last.fm to populate the last.fm account. 
 
-## Featured 
+## Features
+
 
 ## What principles/best practices did you follow
 
