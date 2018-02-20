@@ -10,6 +10,9 @@ This app shows my recent music activity and shows similar tracks.
 #### What you need to know 
 This app is build for a school project. It's my first app using a object literal pattern.
 
+**Interaction diagram**  
+![interaction diagram](https://d.pr/i/Tgz3c1+ "Interaction diagram")
+
 #### API 
 it uses the Last.fm API to get info about this music. I connected my Spotify to Last.fm to populate the last.fm account.  
 

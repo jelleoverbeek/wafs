@@ -301,7 +301,7 @@
         }
     }
 
-    // These are functions that can be usefull everywhere in the app
+    // These are functions that can be useful everywhere in the app
     var helpers = {
         // source: https://gist.github.com/mathewbyrne/1280286
         // Slugify niet naar apart router obj verplaatst omdat er ook een unslugify functie bijgekomen is en het anders heel verspreid staat.
