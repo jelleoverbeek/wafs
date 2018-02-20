@@ -45,6 +45,7 @@
                 preloader.classList.add("hidden")
             }
         },
+        // To be used with a .filter() function, returns an array where only tracks with images exist
         filterByIMG: function (item) {
             if (item.image[3]["#text"]) {
                 return item
@@ -184,24 +185,7 @@
         }
     }
 
-    var sections = {
-        // Return all the sections
-        getSections: function() {
-            return document.querySelectorAll("section")
-        },
-        // Hide all the sections
-        hideSections: function () {
-            this.getSections().forEach(function(element) {
-                element.classList.add("hidden")
-            })
-        },
-        // Hide all sections and show current section again
-        toggle: function (route) {
-            this.hideSections()
-            document.querySelector(route).classList.remove("hidden")
-        }
-    }
-
+    // All functions for the detailpage
     var detailPage = {
         container: document.querySelector("#track"),
         content: {
@@ -210,10 +194,12 @@
         },
         trackInfoLoading: false,
         similarTracksLoading: false,
+        // Clean the detail page
         cleanContent: function () {
             document.querySelector("#no-similar-tracks").classList.add("hidden");
             document.querySelector("#similar-tracks").innerHTML = "";
         },
+        // Render main detail content
         renderMain: function () {
             // TODO img via transparency inladen
             if(this.content.img) {
@@ -222,6 +208,7 @@
 
             Transparency.render(document.getElementById('track'), this.content)
         },
+        // Render similar tracks data
         renderSimilar: function () {
             this.content["similar-tracks"].forEach(function (item) {
                 var html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
@@ -234,6 +221,7 @@
                 api.showPreloader(false)
             }
         },
+        // Populate the this.content obj
         setContent: function (track) {
             var self = this
 
@@ -294,6 +282,26 @@
         }
     }
 
+    // Section functions
+    var sections = {
+        // Return all the sections
+        getSections: function() {
+            return document.querySelectorAll("section")
+        },
+        // Hide all the sections
+        hideSections: function () {
+            this.getSections().forEach(function(element) {
+                element.classList.add("hidden")
+            })
+        },
+        // Hide all sections and show current section again
+        toggle: function (route) {
+            this.hideSections()
+            document.querySelector(route).classList.remove("hidden")
+        }
+    }
+
+    // These are functions that can be usefull everywhere in the app
     var helpers = {
         // source: https://gist.github.com/mathewbyrne/1280286
         // Slugify niet naar apart router obj verplaatst omdat er ook een unslugify functie bijgekomen is en het anders heel verspreid staat.
@@ -310,6 +318,7 @@
         }
     }
 
+    // Router function
     var router = {
         routes: routie({
             'now-playing': function() {
