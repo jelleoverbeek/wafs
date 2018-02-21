@@ -17,7 +17,7 @@ const detailPage = {
     },
     // Render main detail content
     renderMain: function () {
-        // TODO img via transparency inladen
+
         if(this.content.img) {
             this.container.querySelector("img").src = this.content.img
         }
@@ -47,6 +47,7 @@ const detailPage = {
         }
 
         storage.init()
+
 
         api.getTrackInfo(track[0], track[1])
             .then(function (data) {
@@ -83,11 +84,13 @@ const detailPage = {
             .then(function (data) {
 
                 if(!data.similartracks.track.length) {
+
                     document.querySelector("#no-similar-tracks").classList.remove("hidden");
+
                 } else {
                     const tracks = data.similartracks.track.filter(api.filterByIMG)
                     self.content["similar-tracks"] = tracks.map(api.createTrackObj)
-
+                    storage.addSimilarsToTrack(slug, self.content["similar-tracks"])
                     self.renderSimilar()
                 }
 
@@ -98,6 +101,7 @@ const detailPage = {
                 console.error(err)
                 api.showPreloader(false)
             })
+
     },
     init: function (slug) {
         this.cleanContent()

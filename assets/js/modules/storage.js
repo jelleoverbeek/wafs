@@ -7,6 +7,20 @@ const storage = {
             }
         }
     },
+    getTrackIndex: function (slug) {
+        for(let i = 0; i < this.tracks.length; i++) {
+            if(this.tracks[i].slug === slug) {
+                return i
+            }
+        }
+    },
+    addSimilarsToTrack: function (slug, similars) {
+        if(this.trackExists) {
+            let trackIndex = this.getTrackIndex(slug)
+            this.tracks[trackIndex]["similar-tracks"] = similars
+            this.store("tracks", this.tracks)
+        }
+    },
     addTrack: function (track) {
         if(!this.trackExists(track.slug)) {
             this.tracks.push(track)
