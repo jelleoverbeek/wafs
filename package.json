@@ -1,0 +1,23 @@
+{
+  "name": "wafs",
+  "version": "1.0.0",
+  "description": "School project where the goal was to make a single page web application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jelleoverbeek/wafs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jelleoverbeek/wafs/issues"
+  },
+  "homepage": "https://github.com/jelleoverbeek/wafs#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-webserver": "^0.9.1"
+  }
+}
