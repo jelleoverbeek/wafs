@@ -6,11 +6,11 @@ const content = {
     trackList: [],
     // Manipulate recieved track data
     setRecentTracksData: function () {
-        var self = this
+        const self = this
 
         api.getRecentTracks()
             .then(function (data) {
-                var tracks = data.recenttracks.track,
+                let tracks = data.recenttracks.track,
                     tracksWithIMG = []
 
                 // Set current track to first song of array
@@ -40,8 +40,8 @@ const content = {
         document.querySelector("#track-list").innerHTML = ""
 
         // Add 12 items of tracklist to html
-        for(var i = 0; i < 12; i++) {
-            var html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
+        for(let i = 0; i < 12; i++) {
+            let html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
             document.querySelector("#track-list").insertAdjacentHTML('afterbegin', html)
         }
     }

@@ -26,7 +26,7 @@ const detailPage = {
     // Render similar tracks data
     renderSimilar: function () {
         this.content["similar-tracks"].forEach(function (item) {
-            var html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
+            let html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
             document.querySelector("#similar-tracks").insertAdjacentHTML('afterbegin', html)
         })
     },
@@ -38,7 +38,7 @@ const detailPage = {
     },
     // Populate the this.content obj
     setContent: function (track) {
-        var self = this
+        const self = this
 
         api.getTrackInfo(track[0], track[1])
             .then(function (data) {
@@ -75,8 +75,7 @@ const detailPage = {
                 if(!data.similartracks.track.length) {
                     document.querySelector("#no-similar-tracks").classList.remove("hidden");
                 } else {
-                    // TODO no similar tracks found text weghalen
-                    var tracks = data.similartracks.track.filter(api.filterByIMG)
+                    const tracks = data.similartracks.track.filter(api.filterByIMG)
                     self.content["similar-tracks"] = tracks.map(api.createTrackObj)
                     self.renderSimilar()
                 }

@@ -8,7 +8,7 @@ const api = {
     baseURL: "https://ws.audioscrobbler.com/2.0/",
     // Filter array by images that have an image,
     showPreloader: function (loading) {
-        var preloader = document.querySelector(".preloader")
+        const preloader = document.querySelector(".preloader")
 
         if(loading) {
             preloader.classList.remove("hidden")
@@ -24,7 +24,7 @@ const api = {
     },
     // To be used with .map(), returns a clean track object
     createTrackObj: function (item) {
-        var artist = ""
+        let artist = ""
 
         if (item.artist["#text"]) {
             artist = item.artist["#text"]
@@ -42,10 +42,10 @@ const api = {
     },
     // Get the recent tracks from API
     getRecentTracks: function () {
-        var self = this
+        const self = this
 
         return new Promise(function (resolve, reject) {
-            var request = new XMLHttpRequest(),
+            let request = new XMLHttpRequest(),
                 limit = 50,
                 url = self.baseURL + "?method=user.getrecenttracks&user=" + self.user + "&api_key=" + config.key + "&format=" + self.format + "&limit=" + limit
 
@@ -55,7 +55,7 @@ const api = {
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
-                    var data = JSON.parse(request.responseText)
+                    let data = JSON.parse(request.responseText)
                     resolve(data)
                 } else {
                     reject('error')
@@ -71,10 +71,10 @@ const api = {
     },
     // Get individual track info from API
     getTrackInfo: function (artist, name) {
-        var self = this
+        const self = this
 
         return new Promise(function (resolve, reject) {
-            var request = new XMLHttpRequest(),
+            let request = new XMLHttpRequest(),
                 url = self.baseURL + "?method=track.getInfo&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format
 
             self.showPreloader(true)
@@ -83,7 +83,7 @@ const api = {
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
-                    var data = JSON.parse(request.responseText)
+                    let data = JSON.parse(request.responseText)
                     resolve(data)
                 } else {
                     reject('error')
@@ -99,10 +99,10 @@ const api = {
     },
     // Get similar tracks from API
     getSimilarTracks: function (artist, name) {
-        var self = this
+        const self = this
 
         return new Promise(function (resolve, reject) {
-            var request = new XMLHttpRequest(),
+            let request = new XMLHttpRequest(),
                 url = self.baseURL + "?method=track.getsimilar&api_key=" + config.key + "&artist=" + artist + "&track=" + name + "&autocorrect=1&format=" + self.format + "&limit=12"
 
             self.showPreloader(true)
@@ -111,7 +111,7 @@ const api = {
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
-                    var data = JSON.parse(request.responseText)
+                    let data = JSON.parse(request.responseText)
                     resolve(data)
                 } else {
                     reject('error')
