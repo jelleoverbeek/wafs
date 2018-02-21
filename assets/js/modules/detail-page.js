@@ -1,5 +1,6 @@
 import helper from './helper.js'
 import api from './api.js'
+import storage from './storage.js'
 
 const detailPage = {
     container: document.querySelector("#track"),
@@ -37,8 +38,15 @@ const detailPage = {
         }
     },
     // Populate the this.content obj
-    setContent: function (track) {
+    setContent: function (slug) {
         const self = this
+        let track = helper.unslugify(slug)
+        this.content = {
+            tags: [],
+            "similar-tracks": []
+        }
+
+        storage.init()
 
         api.getTrackInfo(track[0], track[1])
             .then(function (data) {
@@ -49,6 +57,7 @@ const detailPage = {
                 } else {
                     self.content.artist = data.track.artist.name
                     self.content.name = data.track.name
+                    self.content.slug =  helper.slugify(data.track.artist.name) + '+' + helper.slugify(data.track.name)
                     self.content.tags = data.track.toptags.tag
                     self.content.listeners = data.track.listeners
 
@@ -58,6 +67,7 @@ const detailPage = {
                         self.content.img = "assets/img/albumart.svg"
                     }
 
+                    storage.addTrack(self.content);
                     self.renderMain()
                 }
 
@@ -77,6 +87,7 @@ const detailPage = {
                 } else {
                     const tracks = data.similartracks.track.filter(api.filterByIMG)
                     self.content["similar-tracks"] = tracks.map(api.createTrackObj)
+
                     self.renderSimilar()
                 }
 
@@ -90,7 +101,7 @@ const detailPage = {
     },
     init: function (slug) {
         this.cleanContent()
-        this.setContent(helper.unslugify(slug))
+        this.setContent(slug)
     }
 }
 

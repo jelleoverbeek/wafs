@@ -1,4 +1,3 @@
-import helper from './modules/helper.js'
 import router from './modules/router.js'
 
 (function () {
