@@ -7,6 +7,13 @@ const api = {
     format: "json",
     baseURL: "https://ws.audioscrobbler.com/2.0/",
     // Filter array by images that have an image,
+    setImage: function (track) {
+        if(track.album && track.album.image[3]["#text"]) {
+            return track.album.image[3]["#text"]
+        } else {
+            return "assets/img/albumart.svg"
+        }
+    },
     showPreloader: function (loading) {
         const preloader = document.querySelector(".preloader")
 

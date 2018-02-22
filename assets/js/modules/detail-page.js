@@ -1,6 +1,7 @@
 import helper from './helper.js'
 import api from './api.js'
 import storage from './storage.js'
+import router from "./router.js";
 
 const detailPage = {
     container: document.querySelector("#track"),
@@ -61,6 +62,7 @@ const detailPage = {
         if(storage.trackExists(slug)) {
             let track = storage.tracks[storage.getTrackIndex(slug)]
 
+            // Set the content object
             this.content.artist = track.artist
             this.content.name = track.name
             this.content.slug =  track.slug
@@ -77,21 +79,18 @@ const detailPage = {
             api.getTrackInfo(track[0], track[1])
                 .then(function (data) {
 
+                    // If error send user to error page and show the error message
                     if(data.error) {
-                        document.querySelector("#error h2").textContent = data.message
-                        routie('error');
+                        router.error(data.message)
                     } else {
+
+                        // Set the content object
                         self.content.artist = data.track.artist.name
                         self.content.name = data.track.name
                         self.content.slug =  helper.slugify(data.track.artist.name) + '+' + helper.slugify(data.track.name)
                         self.content.tags = data.track.toptags.tag
                         self.content.listeners = data.track.listeners
-
-                        if(data.track.album && data.track.album.image[3]["#text"]) {
-                            self.content.img = data.track.album.image[3]["#text"]
-                        } else {
-                            self.content.img = "assets/img/albumart.svg"
-                        }
+                        self.content.img = api.setImage(data.track)
 
                         storage.addTrack(self.content);
                         self.renderMain()
@@ -102,12 +101,13 @@ const detailPage = {
                 })
                 .catch(function (err) {
                     console.error(err)
-                    api.showPreloader(false)
+                    router.error(err)
                 })
 
             api.getSimilarTracks(track[0], track[1])
                 .then(function (data) {
 
+                    // Check if there are any similar tracks found, if not show this to the user
                     if(data.error || !data.similartracks.track.length) {
                         document.querySelector("#no-similar-tracks").classList.remove("hidden");
                     } else {
@@ -117,13 +117,12 @@ const detailPage = {
                         self.renderSimilar()
                     }
 
-
                     self.similarTracksLoading = false;
                     self.checkLoading()
                 })
                 .catch(function (err) {
                     console.error(err)
-                    api.showPreloader(false)
+                    router.error(err)
                 })
         }
     },

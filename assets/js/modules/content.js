@@ -1,44 +1,93 @@
 import api from './api.js'
 import helper from './helper.js'
+import router from "./router.js";
 
 const content = {
-    "current-track": "",
+    currentTrack: {
+        artist: "",
+        name: "",
+        img: "",
+        listeners: "",
+        slug: "",
+        tags: [],
+    },
+    directives: {
+        img: {
+            src: function(params) {
+                return this.img;
+            }
+        }
+    },
     trackList: [],
-    // Manipulate recieved track data
+    // Get more info of the current track
+    setCurrentTrack: function () {
+        const self = this
+
+        api.getTrackInfo(self.currentTrack.artist, self.currentTrack.name)
+            .then(function (data) {
+
+                if(!data.error) {
+                    self.currentTrack.img = api.setImage(data.track)
+                    self.currentTrack.tags = data.track.toptags.tag
+                    self.currentTrack.listeners = data.track.listeners + " listeners"
+                }
+
+                self.renderCurrentTrack()
+            })
+            .catch(function (err) {
+                router.error(err)
+            })
+
+        console.log();
+    },
+    // filter and manipulate the recent track data
     setRecentTracksData: function () {
         const self = this
 
         api.getRecentTracks()
             .then(function (data) {
-                let tracks = data.recenttracks.track,
-                    tracksWithIMG = []
 
-                // Set current track to first song of array
-                content["current-track"] = data.recenttracks.track[0].artist["#text"] + " - " + data.recenttracks.track[0].name
+                if(data.error) {
+                    router.error(data.message)
+                } else {
+                    let tracks = data.recenttracks.track,
+                        tracksWithIMG = []
 
-                // Remove first track of array
-                tracks.shift()
+                    // Set current track to first song of array
+                    self.currentTrack.artist = data.recenttracks.track[0].artist["#text"]
+                    self.currentTrack.name = data.recenttracks.track[0].name
 
-                // Create array where only tracks with images exist
-                tracks = tracks.filter(api.filterByIMG)
+                    self.setCurrentTrack()
 
-                // Create a clean array and put this in to the tracklist
-                tracks = tracks.map(api.createTrackObj)
+                    // Remove first track of array
+                    tracks.shift()
 
-                self.trackList = tracks.reverse()
+                    // Create array where only tracks with images exist
+                    tracks = tracks.filter(api.filterByIMG)
 
-                self.render()
-                api.showPreloader(false)
+                    // Create a clean array and put this in to the tracklist
+                    tracks = tracks.map(api.createTrackObj)
+
+                    // Reverse the trackList so the most recent song is first in list
+                    self.trackList = tracks.reverse()
+
+                    self.renderRecentTracks()
+                    api.showPreloader(false)
+                }
+
             })
             .catch(function (err) {
-                routie('error')
-                console.error(err)
+                router.error(err)
             })
     },
-    render: function () {
-        // Render now playing text using transparencyjs
-        Transparency.render(document.getElementById('now-playing'), this)
+    // Render now playing text using transparencyjs
+    renderCurrentTrack: function () {
+        Transparency.render(document.getElementById('now-playing'), this.currentTrack, this.directives)
+    },
+    // Render recent tracks
+    renderRecentTracks: function () {
 
+        // Clear the list
         document.querySelector("#track-list").innerHTML = ""
 
         // Add 12 items of tracklist to html

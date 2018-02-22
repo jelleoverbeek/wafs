@@ -22,7 +22,12 @@ const router = {
             sections.toggle("#error")
             api.showPreloader(false)
         }
-    })
+    }),
+    error: function (message) {
+        document.querySelector("#error h2").textContent = message
+        api.showPreloader(false)
+        routie('error')
+    }
 }
 
 export default router
