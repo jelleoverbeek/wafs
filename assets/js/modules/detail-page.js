@@ -12,8 +12,16 @@ const detailPage = {
     similarTracksLoading: false,
     // Clean the detail page
     cleanContent: function () {
+
+        this.content = {
+            tags: [],
+            "similar-tracks": []
+        }
+
+        this.renderMain()
+        this.renderSimilar()
+
         document.querySelector("#no-similar-tracks").classList.add("hidden");
-        document.querySelector("#similar-tracks").innerHTML = "";
     },
     // Render main detail content
     renderMain: function () {
@@ -26,9 +34,12 @@ const detailPage = {
     },
     // Render similar tracks data
     renderSimilar: function () {
+        const tracksEl = document.querySelector("#similar-tracks");
+        tracksEl.innerHTML = "";
+
         this.content["similar-tracks"].forEach(function (item) {
             let html = '<li><div><img src="' + item.imgSrc + '"><a href="#track/'+ item.slug + '">' + item.track + '</a></div></li>'
-            document.querySelector("#similar-tracks").insertAdjacentHTML('afterbegin', html)
+            tracksEl.insertAdjacentHTML('afterbegin', html)
         })
     },
     // If both the trackInfo and SimilarTracks API calls are done hide the preloader.
@@ -41,12 +52,12 @@ const detailPage = {
     setContent: function (slug) {
         const self = this
         let track = helper.unslugify(slug)
-        this.content = {
-            tags: [],
-            "similar-tracks": []
-        }
+
+        this.cleanContent()
 
         storage.init()
+
+        // Load track from storage instead of the api
         if(storage.trackExists(slug)) {
             let track = storage.tracks[storage.getTrackIndex(slug)]
 
@@ -114,9 +125,6 @@ const detailPage = {
                     api.showPreloader(false)
                 })
         }
-
-
-
     },
     init: function (slug) {
         this.cleanContent()
