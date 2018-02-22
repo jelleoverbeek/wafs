@@ -26,7 +26,8 @@ it uses the Last.fm API to get info about this music. I connected my Spotify to 
 ## Features
 * Show current playing track (if I'm not playing any track it shows the latest one)
 * Show my recently played tracks
-* Show similar tracks to my recent played tracks
+* Show similar tracks of tracks
+* Detail pages of tracks will be stored in localstorage 
 
 ## What principles/best practices did you follow
 * I used the object literal pattern while developing this app.
