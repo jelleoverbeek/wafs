@@ -12,7 +12,7 @@ const detailPage = {
     trackInfoLoading: false,
     similarTracksLoading: false,
     // Clean the detail page
-    cleanContent: function () {
+    clearContent: function () {
 
         this.content = {
             tags: [],
@@ -55,7 +55,7 @@ const detailPage = {
         let track = helper.unslugify(slug)
 
         // Clean the content of the detail page so it doesn't mix up
-        this.cleanContent()
+        this.clearContent()
 
         // Gets data from localstorage and puts it in memory
         storage.init()
@@ -133,7 +133,7 @@ const detailPage = {
         }
     },
     init: function (slug) {
-        this.cleanContent()
+        this.clearContent()
         this.setContent(slug)
     }
 }

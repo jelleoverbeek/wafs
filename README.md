@@ -11,10 +11,10 @@ This app shows my recent music activity and shows similar tracks.
 This app is build for a school project. It's my first app using a object literal pattern.
 
 **Interaction diagram**  
-![interaction diagram](https://d.pr/i/Tgz3c1+ "Interaction diagram")
+![interaction diagram](https://d.pr/i/bvGQnU+ "Interaction diagram")
 
 **Actor diagram**  
-![actor diagram](https://d.pr/i/Wg5NAr+ "actor diagram")
+![actor diagram](https://d.pr/i/POVKiX+ "actor diagram")
 
 
 #### API 
