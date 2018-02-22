@@ -19,11 +19,13 @@ const content = {
                 // Remove first track of array
                 tracks.shift()
 
-                // Create new array where only tracks with images exist
-                tracksWithIMG = tracks.filter(api.filterByIMG)
+                // Create array where only tracks with images exist
+                tracks = tracks.filter(api.filterByIMG)
 
                 // Create a clean array and put this in to the tracklist
-                content.trackList = tracksWithIMG.map(api.createTrackObj)
+                tracks = tracks.map(api.createTrackObj)
+
+                self.trackList = tracks.reverse()
 
                 self.render()
                 api.showPreloader(false)
@@ -41,6 +43,7 @@ const content = {
 
         // Add 12 items of tracklist to html
         for(let i = 0; i < 12; i++) {
+
             let html = '<li><div><img src="' + this.trackList[i].imgSrc + '"><a href="#track/'+ this.trackList[i].slug + '">' + this.trackList[i].track + '</a></div></li>'
             document.querySelector("#track-list").insertAdjacentHTML('afterbegin', html)
         }

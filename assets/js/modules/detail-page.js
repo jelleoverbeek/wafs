@@ -108,7 +108,7 @@ const detailPage = {
             api.getSimilarTracks(track[0], track[1])
                 .then(function (data) {
 
-                    if(!data.similartracks.track.length) {
+                    if(data.error || !data.similartracks.track.length) {
                         document.querySelector("#no-similar-tracks").classList.remove("hidden");
                     } else {
                         const tracks = data.similartracks.track.filter(api.filterByIMG)
@@ -116,6 +116,7 @@ const detailPage = {
                         storage.addSimilarsToTrack(slug, self.content["similar-tracks"])
                         self.renderSimilar()
                     }
+
 
                     self.similarTracksLoading = false;
                     self.checkLoading()
