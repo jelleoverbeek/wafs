@@ -54,8 +54,10 @@ const detailPage = {
         const self = this
         let track = helper.unslugify(slug)
 
+        // Clean the content of the detail page so it doesn't mix up
         this.cleanContent()
 
+        // Gets data from localstorage and puts it in memory
         storage.init()
 
         // Load track from storage instead of the api
@@ -111,8 +113,12 @@ const detailPage = {
                     if(data.error || !data.similartracks.track.length) {
                         document.querySelector("#no-similar-tracks").classList.remove("hidden");
                     } else {
+
+                        // filter tracks
                         const tracks = data.similartracks.track.filter(api.filterByIMG)
                         self.content["similar-tracks"] = tracks.map(api.createTrackObj)
+
+                        // Add similar tracks to localstorage track
                         storage.addSimilarsToTrack(slug, self.content["similar-tracks"])
                         self.renderSimilar()
                     }
