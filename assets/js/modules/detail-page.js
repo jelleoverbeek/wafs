@@ -47,60 +47,75 @@ const detailPage = {
         }
 
         storage.init()
+        if(storage.trackExists(slug)) {
+            let track = storage.tracks[storage.getTrackIndex(slug)]
 
+            this.content.artist = track.artist
+            this.content.name = track.name
+            this.content.slug =  track.slug
+            this.content.tags = track.tags
+            this.content.listeners = track.listeners
+            this.content.img = track.img
+            this.content["similar-tracks"] = track["similar-tracks"]
 
-        api.getTrackInfo(track[0], track[1])
-            .then(function (data) {
+            this.renderMain()
+            this.renderSimilar()
+            api.showPreloader(false)
 
-                if(data.error) {
-                    document.querySelector("#error h2").textContent = data.message
-                    routie('error');
-                } else {
-                    self.content.artist = data.track.artist.name
-                    self.content.name = data.track.name
-                    self.content.slug =  helper.slugify(data.track.artist.name) + '+' + helper.slugify(data.track.name)
-                    self.content.tags = data.track.toptags.tag
-                    self.content.listeners = data.track.listeners
+        } else {
+            api.getTrackInfo(track[0], track[1])
+                .then(function (data) {
 
-                    if(data.track.album && data.track.album.image[3]["#text"]) {
-                        self.content.img = data.track.album.image[3]["#text"]
+                    if(data.error) {
+                        document.querySelector("#error h2").textContent = data.message
+                        routie('error');
                     } else {
-                        self.content.img = "assets/img/albumart.svg"
+                        self.content.artist = data.track.artist.name
+                        self.content.name = data.track.name
+                        self.content.slug =  helper.slugify(data.track.artist.name) + '+' + helper.slugify(data.track.name)
+                        self.content.tags = data.track.toptags.tag
+                        self.content.listeners = data.track.listeners
+
+                        if(data.track.album && data.track.album.image[3]["#text"]) {
+                            self.content.img = data.track.album.image[3]["#text"]
+                        } else {
+                            self.content.img = "assets/img/albumart.svg"
+                        }
+
+                        storage.addTrack(self.content);
+                        self.renderMain()
                     }
 
-                    storage.addTrack(self.content);
-                    self.renderMain()
-                }
+                    self.trackInfoLoading = false;
+                    self.checkLoading()
+                })
+                .catch(function (err) {
+                    console.error(err)
+                    api.showPreloader(false)
+                })
 
-                self.trackInfoLoading = false;
-                self.checkLoading()
-            })
-            .catch(function (err) {
-                console.error(err)
-                api.showPreloader(false)
-            })
+            api.getSimilarTracks(track[0], track[1])
+                .then(function (data) {
 
-        api.getSimilarTracks(track[0], track[1])
-            .then(function (data) {
+                    if(!data.similartracks.track.length) {
+                        document.querySelector("#no-similar-tracks").classList.remove("hidden");
+                    } else {
+                        const tracks = data.similartracks.track.filter(api.filterByIMG)
+                        self.content["similar-tracks"] = tracks.map(api.createTrackObj)
+                        storage.addSimilarsToTrack(slug, self.content["similar-tracks"])
+                        self.renderSimilar()
+                    }
 
-                if(!data.similartracks.track.length) {
+                    self.similarTracksLoading = false;
+                    self.checkLoading()
+                })
+                .catch(function (err) {
+                    console.error(err)
+                    api.showPreloader(false)
+                })
+        }
 
-                    document.querySelector("#no-similar-tracks").classList.remove("hidden");
 
-                } else {
-                    const tracks = data.similartracks.track.filter(api.filterByIMG)
-                    self.content["similar-tracks"] = tracks.map(api.createTrackObj)
-                    storage.addSimilarsToTrack(slug, self.content["similar-tracks"])
-                    self.renderSimilar()
-                }
-
-                self.similarTracksLoading = false;
-                self.checkLoading()
-            })
-            .catch(function (err) {
-                console.error(err)
-                api.showPreloader(false)
-            })
 
     },
     init: function (slug) {
