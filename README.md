@@ -103,3 +103,4 @@ https://github.com/ViennaM/wafs/pull/3
 * Seperate the HTML into components 
 * Less random album arts by getting them from another source
 * Replace transparency with other template engine
+* Rewrite everything to ES6
