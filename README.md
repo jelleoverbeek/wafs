@@ -4,6 +4,8 @@ School project where the goal was to make a single page web application.
 #### Live demo
 https://jelleoverbeek.github.io/wafs/
 
+![Preview](https://d.pr/i/rHG8Zg+ "Preview")
+
 #### Purpose
 This app shows my recent music activity and shows similar tracks.
 
@@ -27,7 +29,11 @@ it uses the Last.fm API to get info about this music. I connected my Spotify to 
 * Show current playing track (if I'm not playing any track it shows the latest one)
 * Show my recently played tracks
 * Show similar tracks of tracks
-* Detail pages of tracks will be stored in localstorage 
+* Detail pages of tracks will be stored in localstorage
+
+## Libraries
+* [Transparency](https://github.com/leonidas/transparency)
+* [Routie](https://github.com/jgallen23/routie)
 
 ## What principles/best practices did you follow
 * I used the object literal pattern while developing this app.
@@ -92,3 +98,8 @@ https://github.com/dipsaus9/wafs/pull/1
 **Week 2**  
 https://github.com/velomovies/wafs/pull/5  
 https://github.com/ViennaM/wafs/pull/3  
+
+## Roadmap
+* Seperate the HTML into components 
+* Less random album arts by getting them from another source
+* Replace transparency with other template engine

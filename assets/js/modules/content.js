@@ -71,6 +71,7 @@ const content = {
                     // Reverse the trackList so the most recent song is first in list
                     self.trackList = tracks.reverse()
 
+
                     self.renderRecentTracks()
                     api.showPreloader(false)
                 }
