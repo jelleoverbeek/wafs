@@ -12,8 +12,11 @@ This app shows my recent music activity and shows similar tracks.
 #### What you need to know 
 This app is build for a school project. It's my first app using a object literal pattern.
 
-**Interaction diagram**  
-![interaction diagram](https://d.pr/i/bvGQnU+ "Interaction diagram")
+**Interaction diagram: current track & recent tracks flow**  
+![current track & recent tracks flow](https://d.pr/i/bvGQnU+ "current track & recent tracks flow")
+
+**Interaction diagram: detail page flow (Track info & similar tracks)**
+![detail page flow (Track info & similar tracks)](https://d.pr/i/yJrDc0+ "detail page flow (Track info & similar tracks)")
 
 **Actor diagram**  
 ![actor diagram](https://d.pr/i/POVKiX+ "actor diagram")
