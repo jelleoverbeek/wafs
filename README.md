@@ -16,7 +16,7 @@ This app is build for a school project. It's my first app using a object literal
 ![current track & recent tracks flow](https://d.pr/i/bvGQnU+ "current track & recent tracks flow")
 
 **Interaction diagram: detail page flow (Track info & similar tracks)**
-![detail page flow (Track info & similar tracks)](https://d.pr/i/yJrDc0+ "detail page flow (Track info & similar tracks)")
+![detail page flow (Track info & similar tracks)](https://d.pr/i/C7nmEa+ "detail page flow (Track info & similar tracks)")
 
 **Actor diagram**  
 ![actor diagram](https://d.pr/i/POVKiX+ "actor diagram")
